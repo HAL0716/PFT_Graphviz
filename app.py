@@ -2,6 +2,7 @@ import os
 import streamlit as st
 from itertools import product
 from periodic_finite_type import PeriodicFiniteType
+from graph_visualizer import GraphVisualizer
 
 # ----------------------------------------
 # 定数
@@ -27,8 +28,11 @@ def main():
     # --- サイドバー（パラメータ入力） ---
     st.sidebar.header('パラメータの入力')
     alphabet = st.sidebar.multiselect('シンボル', list(SYMBOLS), default=['0', '1'])
-    phase = st.sidebar.slider('周期', value=2, step=1, min_value=2, max_value=10)
-    f_len = st.sidebar.slider('禁止語長', value=2, step=1, min_value=1, max_value=10)
+    phase    = st.sidebar.slider('周期', value=2, step=1, min_value=2, max_value=10)
+    f_len    = st.sidebar.slider('禁止語長', value=2, step=1, min_value=1, max_value=10)
+    st.sidebar.header('描画の設定')
+    x_scale  = st.sidebar.slider('縮尺: x', value=1.0, step=0.1, min_value=0.2, max_value=2.0)
+    y_scale  = st.sidebar.slider('縮尺: y', value=0.5, step=0.1, min_value=0.2, max_value=2.0)
 
     # --- 禁止語の入力 ---
     fword_all = [''.join(p) for p in product(alphabet, repeat=f_len)] if alphabet else []
@@ -37,20 +41,59 @@ def main():
 
     # --- PFTの構築と禁止語の更新 ---
     try:
-        PFT = PeriodicFiniteType(phase, f_len, fwords, True, OUTPUT_DIR)
+        PFT = PeriodicFiniteType(phase, f_len, fwords, True)
         PFT.set_adj_list(alphabet)
 
-        img = PFT.export_to_png(use_latex=True)
+        Graph = GraphVisualizer(PFT, x_scale, y_scale)
+
+        img = Graph.png
+        pdf = Graph.pdf
+
         if img:
-            st.image(img, caption="Generated Graph", use_container_width=True)
+            st.header("画像データ")
+            st.image(img, use_container_width=True)
+
+            st.subheader("⬇ ダウンロード")
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.download_button(
+                    label="PNG を保存",
+                    data=img,
+                    file_name="graph.png",
+                    mime="image/png",
+                    key="png_dl",
+                    use_container_width=True
+                )
+            with col2:
+                if pdf:
+                    st.download_button(
+                        label="PDF を保存",
+                        data=pdf,
+                        file_name="graph.pdf",
+                        mime="application/pdf",
+                        key="pdf_dl",
+                        use_container_width=True
+                    )
         else:
-            st.write("画像の生成に失敗しました")
-            
-        dot_content = PFT.export_to_dot(use_latex=True)
-        if dot_content:
-            st.code(dot_content, language='dot')
+            st.error("PNG の出力に失敗しました。")
+
+        dot = Graph.dot
+        if dot:
+            st.header("DOT ファイル")
+            st.code(dot, language='dot')
+
+            st.subheader("⬇ ダウンロード")
+            st.download_button(
+                label="DOT を保存",
+                data=dot,
+                file_name="graph.dot",
+                mime="text/plain",
+                key="dot_dl",
+                use_container_width=True
+            )
         else:
-            st.write("データの生成に失敗しました")
+            st.write("Error: DOT の出力")
 
     except ValueError as e:
         st.error(f"エラー: {e}")
