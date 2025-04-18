@@ -54,7 +54,7 @@ class GraphVisualizer:
                     for node in nodes:
                         if layer_len == 0:
                             idx = next(idx_iter)
-                        x, y = calc_pos(idx, N, used_cnt[idx] + 1)
+                        x, y = calc_pos(idx+1, N, used_cnt[idx] + 1)
                         pos_map[node] = (x, y)
                         used_cnt[idx] += 1
                     idx = next(idx_iter)

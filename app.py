@@ -31,8 +31,8 @@ def main():
     phase    = st.sidebar.slider('周期', value=2, step=1, min_value=2, max_value=10)
     f_len    = st.sidebar.slider('禁止語長', value=2, step=1, min_value=1, max_value=10)
     st.sidebar.header('描画の設定')
-    x_scale  = st.sidebar.slider('縮尺: x', value=1.0, step=0.1, min_value=0.2, max_value=2.0)
-    y_scale  = st.sidebar.slider('縮尺: y', value=1.0, step=0.1, min_value=0.2, max_value=2.0)
+    x_scale  = st.sidebar.slider('縮尺: x', value=1.0, step=0.05, min_value=0.2, max_value=2.0)
+    y_scale  = st.sidebar.slider('縮尺: y', value=1.0, step=0.05, min_value=0.2, max_value=2.0)
 
     # --- 禁止語の入力 ---
     st.header('禁止語')
