@@ -1,6 +1,5 @@
 import os
 import io
-import tempfile
 from pathlib import Path
 from typing import Optional
 from graphviz import Source
@@ -15,7 +14,7 @@ class PeriodicFiniteType:
         self.__nodes: set[Node] = set()
         self.__adj_list: dict[Node, dict[str, Node]] = {}
         
-        os.makedirs(self.dir_path, exist_ok=True)
+        # os.makedirs(self.dir_path, exist_ok=True)
 
         if is_beal:
             self.__init_beal_nodes(fwords)
@@ -44,13 +43,6 @@ class PeriodicFiniteType:
             src: set_dsts(src)
             for src in self.__nodes if len(src.label) < self._f_len
         }
-
-    
-    def _prepare_path(self, filename: str, suffix: str) -> Path:
-        """一時ファイル用のフルパスを生成"""
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = Path(tmpdir) / filename
-            return path.with_suffix(suffix)
         
     def export_to_dot(self) -> str:
         nodes = sorted(self.__nodes, key=lambda n: (n.label, n.phase))
@@ -67,10 +59,8 @@ class PeriodicFiniteType:
         
         return dot_content
 
-    def export_to_png(self, filename: str | Path = "graph") -> Optional[io.BytesIO]:
+    def export_to_png(self) -> Optional[io.BytesIO]:
         try:
-            dot_path = self._prepare_path(filename, ".dot")
-
             # DOTファイルの生成
             dot_content = self.export_to_dot()
             
@@ -90,7 +80,6 @@ class PeriodicFiniteType:
 
             return img_byte_arr
         except Exception as e:
-            # 失敗した場合はNoneを返す
             return None
 
     def __str__(self) -> str:

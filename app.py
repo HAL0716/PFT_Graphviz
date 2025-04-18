@@ -60,5 +60,4 @@ def main():
 # 実行
 # ----------------------------------------
 if __name__ == "__main__":
-    create_directory()
     main()
