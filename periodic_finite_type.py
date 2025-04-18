@@ -1,4 +1,5 @@
 import os
+import io
 import tempfile
 from pathlib import Path
 from typing import Optional
@@ -50,35 +51,39 @@ class PeriodicFiniteType:
             path = Path(tmpdir) / filename
             return path.with_suffix(suffix)
     
-    def export_to_dot(self, filename: str | Path = "graph") -> None:
-        filepath = self._prepare_path(filename, ".dot")
-        
+    def export_to_dot(self) -> str:
+        """.dot内容をファイルに保存せずに文字列で返す"""
         nodes = sorted(self.__nodes, key=lambda n: (n.label, n.phase))
         idx_map = {node: i for i, node in enumerate(nodes)}
 
-        with filepath.open("w") as f:
-            f.write("digraph G {\n")
-            for node, idx in idx_map.items():
-                f.write(f'\t{idx} [label="{node}"];\n')
-            f.write("\n")
-            for src, dsts in self.__adj_list.items():
-                for label, dst in dsts.items():
-                    f.write(f'\t{idx_map[src]} -> {idx_map[dst]} [label="{label}"];\n')
-            f.write("}\n")
+        dot_content = "digraph G {\n"
+        for node, idx in idx_map.items():
+            dot_content += f'\t{idx} [label="{node}"];\n'
+        dot_content += "\n"
+        for src, dsts in self.__adj_list.items():
+            for label, dst in dsts.items():
+                dot_content += f'\t{idx_map[src]} -> {idx_map[dst]} [label="{label}"];\n'
+        dot_content += "}\n"
+        
+        return dot_content
 
-    def export_to_png(self, filename: str | Path = "graph") -> Optional[Path]:
+    def export_to_png(self) -> Optional[io.BytesIO]:
+        """メモリ内でPNG画像を生成して返す"""
         try:
-            dot_path = self._prepare_path(filename, ".dot")
-            png_path = self._prepare_path(filename, ".png")
+            # .dotファイル内容を生成
+            dot_content = self.export_to_dot()
 
-            self.export_to_dot(dot_path.name)
+            # DOT内容をgraphvizのSourceに渡してPNGに変換
+            src = Source(dot_content)
 
-            src = Source.from_file(dot_path)
-            src.render(png_path.with_suffix(""), format="png", cleanup=True)
+            # PNGデータをメモリに保持
+            png_data = src.pipe(format='png')  # pipeメソッドでメモリ内に画像データを直接取得
 
-            return png_path
+            # バイナリデータをBytesIOに格納して返す
+            img_io = io.BytesIO(png_data)
+            return img_io
+
         except Exception as e:
-            # print(f"Export failed: {e}")
             return None
 
     def __str__(self) -> str:

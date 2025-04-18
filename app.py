@@ -39,11 +39,11 @@ def main():
     try:
         PFT = PeriodicFiniteType(phase, f_len, fwords, True, OUTPUT_DIR)
         PFT.set_adj_list(alphabet)
-        output_path = PFT.export_to_png()
-        if output_path:
-            st.image(output_path, caption='Generated Graph', use_container_width=True)
+        img = PFT.export_to_png()
+        if img:
+            st.image(img, caption="Generated Graph", use_column_width=True)
         else:
-            st.error("グラフの生成に失敗しました。")
+            st.write("画像の生成に失敗しました")
     except ValueError as e:
         st.error(f"エラー: {e}")
     except Exception as e:
