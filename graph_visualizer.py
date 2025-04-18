@@ -34,7 +34,7 @@ class GraphVisualizer:
 
             def calc_pos(idx: int, N: int, r: float) -> tuple[float, float]:
                 """ノードの位置を計算"""
-                angle = - (idx * (2 * math.pi / N)) # + (math.pi / 2) 
+                angle = (math.pi / 2) - (idx * (2 * math.pi / N))
                 return round(r * math.cos(angle) * self.x_scale, 2), round(r * math.sin(angle) * self.y_scale, 2)
             
             def set_N() -> int:
