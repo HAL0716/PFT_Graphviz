@@ -40,17 +40,18 @@ def main():
         PFT = PeriodicFiniteType(phase, f_len, fwords, True, OUTPUT_DIR)
         PFT.set_adj_list(alphabet)
 
-        dot_content = PFT.export_to_dot()
+        img = PFT.export_to_png(use_latex=True)
+        if img:
+            st.image(img, caption="Generated Graph", use_container_width=True)
+        else:
+            st.write("画像の生成に失敗しました")
+            
+        dot_content = PFT.export_to_dot(use_latex=True)
         if dot_content:
             st.code(dot_content, language='dot')
         else:
             st.write("データの生成に失敗しました")
 
-        img = PFT.export_to_png()
-        if img:
-            st.image(img, caption="Generated Graph", use_container_width=True)
-        else:
-            st.write("画像の生成に失敗しました")
     except ValueError as e:
         st.error(f"エラー: {e}")
     except Exception as e:

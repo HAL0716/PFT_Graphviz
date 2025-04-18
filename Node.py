@@ -5,6 +5,10 @@ class Node:
     label: str = ""
     phase: int = 0
 
+    @property
+    def texlbl(self) -> str:
+        return f"({self.label if self.label else "\epsilon"}, {self.phase})"
+
     def __repr__(self) -> str:
         return f"({self.label}, {self.phase})"
     
