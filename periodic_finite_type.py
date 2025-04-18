@@ -1,4 +1,5 @@
 import os
+import tempfile
 from pathlib import Path
 from typing import Optional
 from graphviz import Source
@@ -43,12 +44,11 @@ class PeriodicFiniteType:
         }
 
     
-    def _prepare_path(self, filename: str | Path, suffix: str) -> Path:
-        """出力ファイル用のフルパスを生成し、ディレクトリを確保する"""
-        path = self.dir_path / filename if isinstance(filename, str) else filename
-        path = path.with_suffix(suffix)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        return path
+    def _prepare_path(self, filename: str, suffix: str) -> Path:
+        """一時ファイル用のフルパスを生成"""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / filename
+            return path.with_suffix(suffix)
     
     def export_to_dot(self, filename: str | Path = "graph") -> None:
         filepath = self._prepare_path(filename, ".dot")
