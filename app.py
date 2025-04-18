@@ -42,6 +42,8 @@ def main():
         output_path = PFT.export_to_png()
         if output_path:
             st.image(output_path, caption='Generated Graph', use_container_width=True)
+        else:
+            st.error("グラフの生成に失敗しました。")
     except ValueError as e:
         st.error(f"エラー: {e}")
     except Exception as e:
