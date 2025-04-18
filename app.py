@@ -39,6 +39,12 @@ def main():
     try:
         PFT = PeriodicFiniteType(phase, f_len, fwords, True, OUTPUT_DIR)
         PFT.set_adj_list(alphabet)
+        dot = PFT.export_to_dot()
+        if dot:
+            st.code(dot, language='dot')
+        else:
+            st.write("データの生成に失敗しました")
+
         img = PFT.export_to_png()
         if img:
             st.image(img, caption="Generated Graph", use_column_width=True)
