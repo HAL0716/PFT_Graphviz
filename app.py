@@ -48,7 +48,7 @@ def main():
 
         img = PFT.export_to_png()
         if img:
-            st.image(img, caption="Generated Graph", use_column_width=True)
+            st.image(img, caption="Generated Graph", use_container_width=True)
         else:
             st.write("画像の生成に失敗しました")
     except ValueError as e:

@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional
 from graphviz import Source
 from Node import Node
+import PIL.Image
 
 class PeriodicFiniteType:
     def __init__(self, phase: int, f_len: int, fwords: list[str], is_beal: bool = True, output_dir: str = "output") -> None:
@@ -66,24 +67,30 @@ class PeriodicFiniteType:
         
         return dot_content
 
-
-    def export_to_png(self) -> Optional[io.BytesIO]:
-        """メモリ内でPNG画像を生成して返す"""
+    def export_to_png(self, filename: str | Path = "graph") -> Optional[io.BytesIO]:
         try:
-            # .dotファイル内容を生成
+            dot_path = self._prepare_path(filename, ".dot")
+
+            # DOTファイルの生成
             dot_content = self.export_to_dot()
-
-            # DOT内容をgraphvizのSourceに渡してPNGに変換
+            
+            # GraphvizのSourceオブジェクトを使ってPNGを生成
             src = Source(dot_content)
+            
+            # 画像をメモリ上で生成し、バイナリとして返す
+            png_data = src.pipe(format='png')
 
-            # PNGデータをメモリに保持
-            png_data = src.pipe(format='png')  # pipeメソッドでメモリ内に画像データを直接取得
+            # バイナリデータをImageとして読み込む
+            img = PIL.Image.open(io.BytesIO(png_data))
 
-            # バイナリデータをBytesIOに格納して返す
-            img_io = io.BytesIO(png_data)
-            return img_io
+            # Streamlitに渡すためにBytesIOでラップ
+            img_byte_arr = io.BytesIO()
+            img.save(img_byte_arr, format='PNG')
+            img_byte_arr.seek(0)
 
+            return img_byte_arr
         except Exception as e:
+            # 失敗した場合はNoneを返す
             return None
 
     def __str__(self) -> str:
