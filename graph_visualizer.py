@@ -34,7 +34,7 @@ class GraphVisualizer:
 
             def calc_pos(idx: int, N: int, r: float) -> tuple[float, float]:
                 """ノードの位置を計算"""
-                angle = (math.pi / 2) - (idx * (2 * math.pi / N))
+                angle = - (idx * (2 * math.pi / N)) # + (math.pi / 2) 
                 return round(r * math.cos(angle) * self.x_scale, 2), round(r * math.sin(angle) * self.y_scale, 2)
             
             def set_N() -> int:
@@ -84,7 +84,7 @@ class GraphVisualizer:
 
             for src, dsts in self.PFT.adj_list.items():
                 for label, dst in dsts.items():
-                    lines.append(f'\t{idx_map[src]} -> {idx_map[dst]} [texlbl="${label}$"];')
+                    lines.append(f'\t{idx_map[src]} -> {idx_map[dst]} [label="{label}", texlbl="${label}$"];')
             lines.append("}")
 
             return "\n".join(lines)

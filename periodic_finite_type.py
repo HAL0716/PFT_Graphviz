@@ -1,14 +1,4 @@
-import io
-import math
-import tempfile
-import subprocess
-from typing import Optional
-
-from graphviz import Source
-from dot2tex import dot2tex
-from pdf2image import convert_from_path
-
-from Node import Node  # あなたのローカル定義クラス
+from Node import Node
 
 class PeriodicFiniteType:
     def __init__(self, phase: int, f_len: int, fwords: list[str], is_beal: bool = True) -> None:

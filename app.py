@@ -32,12 +32,13 @@ def main():
     f_len    = st.sidebar.slider('禁止語長', value=2, step=1, min_value=1, max_value=10)
     st.sidebar.header('描画の設定')
     x_scale  = st.sidebar.slider('縮尺: x', value=1.0, step=0.1, min_value=0.2, max_value=2.0)
-    y_scale  = st.sidebar.slider('縮尺: y', value=0.5, step=0.1, min_value=0.2, max_value=2.0)
+    y_scale  = st.sidebar.slider('縮尺: y', value=1.0, step=0.1, min_value=0.2, max_value=2.0)
 
     # --- 禁止語の入力 ---
+    st.header('禁止語')
     fword_all = [''.join(p) for p in product(alphabet, repeat=f_len)] if alphabet else []
     fword_init = [alphabet[0] * f_len] if alphabet else []
-    fwords = st.multiselect('禁止語', fword_all, default=fword_init)
+    fwords = st.multiselect('禁止語', fword_all, default=fword_init, label_visibility="hidden")
 
     # --- PFTの構築と禁止語の更新 ---
     try:
