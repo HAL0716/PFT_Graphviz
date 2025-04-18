@@ -41,7 +41,7 @@ def main():
         PFT.set_adj_list(alphabet)
         dot = PFT.export_to_dot()
         if dot:
-            st.code(dot, language='dot')
+            st.write(dot)
         else:
             st.write("データの生成に失敗しました")
 
