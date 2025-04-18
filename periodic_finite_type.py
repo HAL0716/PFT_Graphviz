@@ -50,9 +50,8 @@ class PeriodicFiniteType:
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / filename
             return path.with_suffix(suffix)
-    
+        
     def export_to_dot(self) -> str:
-        """.dot内容をファイルに保存せずに文字列で返す"""
         nodes = sorted(self.__nodes, key=lambda n: (n.label, n.phase))
         idx_map = {node: i for i, node in enumerate(nodes)}
 
@@ -66,6 +65,7 @@ class PeriodicFiniteType:
         dot_content += "}\n"
         
         return dot_content
+
 
     def export_to_png(self) -> Optional[io.BytesIO]:
         """メモリ内でPNG画像を生成して返す"""
